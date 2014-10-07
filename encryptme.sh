@@ -43,7 +43,8 @@ function getFiles(){
   if [ -d "$FOLDER" ]; then
     # the directory exists
     cd $FOLDER
-    echo $(pwd)
+    #echo $(pwd)
+    find $FOLDER -type d -print
   fi
 }
 
