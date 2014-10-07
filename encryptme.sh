@@ -40,12 +40,23 @@ function validate(){
 }
 
 function getFiles(){
+  createEncryptPassFile
   if [ -d "$FOLDER" ]; then
     # the directory exists
     cd $FOLDER
     #echo $(pwd)
-    find $FOLDER -type d -print
+    files=$(find . -name *.zip)
+    for file in $files;
+    do
+      echo $file;
+    done
   fi
+  #removeEncryptFile
+}
+function createEncryptPassFile(){
+  filename = ${PASSWORD}
+  echo #filename
+  #cat "${PASSWORD}" >> /tmp/
 }
 
 
