@@ -40,7 +40,7 @@ function validate(){
 }
 
 function getFiles(){
-  passfile=createEncryptPassFile
+  passfile=$(createEncryptPassFile)
   if [ -d "$FOLDER" ]; then
     # the directory exists
     cd $FOLDER
@@ -49,7 +49,7 @@ function getFiles(){
     for file in $files;
     do
       # encrypt all the files in the for loop that were previously found
-      gpg -c --passphrase-file /tmp/$passfile -o $file --cipher-algo AES256 $file
+      gpg -c --passphrase-file /tmp/$passfile -o $FOLDER/$file.gpg --cipher-algo AES256 $FOLDER/$file
       # remove the file after it has been encrypted
       #rm $file
     done
