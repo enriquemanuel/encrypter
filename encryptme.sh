@@ -40,7 +40,7 @@ function validate(){
 }
 
 function getFiles(){
-  createEncryptPassFile
+  passfile=createEncryptPassFile
   if [ -d "$FOLDER" ]; then
     # the directory exists
     cd $FOLDER
@@ -48,15 +48,25 @@ function getFiles(){
     files=$(find . -name *.zip)
     for file in $files;
     do
-      echo $file;
+      # encrypt all the files in the for loop that were previously found
+      gpg -c --passphrase-file /tmp/$passfile -o $file --cipher-algo AES256 $file
+      # remove the file after it has been encrypted
+      #rm $file
     done
   fi
-  #removeEncryptFile
+  removeEncryptPassFile
 }
+
+
+#helper functions to create the encryption password file temporarily until this batch is completed.
 function createEncryptPassFile(){
-  filename = ${PASSWORD}
-  echo #filename
-  #cat "${PASSWORD}" >> /tmp/
+  filename=$(echo $FOLDER | tr / _)"_passfile.txt"
+  echo "$PASSWORD" > /tmp/$filename
+  return filename
+}
+function removeEncryptPassFile(){
+  filename=$(echo $FOLDER | tr / _)"_passfile.txt"
+  rm -rf /tmp/$filename
 }
 
 
