@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 # Encrypts the archive folder
 # Author: Enrique Valenzuela <enrique.valenzuela@blackboard.com>
 # Version 1.0
@@ -19,27 +19,32 @@ function validate(){
     echo '====================================================='
     echo "Here is the usage: "
     help
-    exit
+    exit 1
   elif [ -z "${PASSWORD}" ]; then
     echo '====================================================='
     echo "Error: Passowrd can't be empty, please refer to the help."
     echo '====================================================='
     echo "Here is the usage: "
     help
-    exit
-  elif [ -z "${COMPRESS}" ]; then
+    exit 1
+  elif [[ -z "${COMPRESS}" || "${COMPRESS}" == *[[:digit:]]* ]]; then
     echo '====================================================='
-    echo "Error: Compress can't be empty, please refer to the help."
+    echo "Error: Compress can't be empty or be a digit, please refer to the help."
     echo '====================================================='
     echo "Here is the usage: "
     help
-    exit
+    exit 1
   else
     getFiles
+  fi
 }
 
 function getFiles(){
-  
+  if [ -d "$FOLDER" ]; then
+    # the directory exists
+    cd $FOLDER
+    echo $(pwd)
+  fi
 }
 
 
