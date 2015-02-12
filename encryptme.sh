@@ -85,7 +85,6 @@ OPTIONS:
    -h     Show this message
    -f     Folder to be encrypted
    -p     Password to encrypt the archives
-   -c     Compress after the encryption (yes or no)
 
 EOF
 }
