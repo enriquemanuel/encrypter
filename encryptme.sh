@@ -6,7 +6,7 @@
 
 ##### Constants
 TITLE="System Information for $HOSTNAME"
-DATE=`date +"%Y-%m-%d"`
+DATE=`date +"%Y-%m-%d-%s"`
 TIMESTAMP="Updated on $DATE by $USER"
 GZEXT='.gz'
 
@@ -27,47 +27,48 @@ function validate(){
     echo "Here is the usage: "
     help
     exit 1
-  elif [[ -z "${COMPRESS}" || "${COMPRESS}" == *[[:digit:]]* ]]; then
-    echo '====================================================='
-    echo "Error: Compress can't be empty or be a digit, please refer to the help."
-    echo '====================================================='
-    echo "Here is the usage: "
-    help
-    exit 1
   else
     getFiles
   fi
 }
 
 function getFiles(){
-  passfile=$(createEncryptPassFile)
+
+  #passfile=$(createEncryptPassFile)
+  # create password file in temp folder
+
+  filename=$DATE"_passfile.txt"
+  echo "$PASSWORD" > /tmp/$filename
+
   if [ -d "$FOLDER" ]; then
     # the directory exists
     cd $FOLDER
     #echo $(pwd)
-    files=$(find . -name *.zip)
+    #find all the files that are zips in the folder
+    files=$(ls *.zip)
+    #counter
+    count=0
     for file in $files;
     do
       # encrypt all the files in the for loop that were previously found
-      gpg -c --passphrase-file /tmp/$passfile -o $FOLDER/$file.gpg --cipher-algo AES256 $FOLDER/$file
+
+      $(cat /tmp/$filename  | gpg -cv --passphrase-fd 0 -o $FOLDER/$file.gpg --cipher-algo AES256 $FOLDER/$file )
+
+      echo " "
       # remove the file after it has been encrypted
-      #rm $file
+      rm $file
+      count=$((count+1))
     done
+    echo $count
   fi
-  removeEncryptPassFile
-}
 
-
-#helper functions to create the encryption password file temporarily until this batch is completed.
-function createEncryptPassFile(){
-  filename=$(echo $FOLDER | tr / _)"_passfile.txt"
-  echo "$PASSWORD" > /tmp/$filename
-  return filename
-}
-function removeEncryptPassFile(){
-  filename=$(echo $FOLDER | tr / _)"_passfile.txt"
+  #remove Encrypt Pass File
   rm -rf /tmp/$filename
+
 }
+
+
+
 
 
 # Function to provide the help to the screen if its invoked or no parameter is sent to the script
@@ -100,7 +101,7 @@ if [ -z $1 ]; then
   exit 1
 else
   # validating and assigning the variables to each global variable
-  while getopts "hf:p:c:" opts
+  while getopts "hf:p:" opts
   do
     case $opts in
       h)
@@ -108,7 +109,6 @@ else
         exit 1 ;;
       f) FOLDER=${OPTARG}  ;;
       p) PASSWORD=${OPTARG}  ;;
-      c) COMPRESS=${OPTARG}  ;;
     esac
   done
 fi
