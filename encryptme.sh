@@ -37,8 +37,7 @@ function getFiles(){
   #passfile=$(createEncryptPassFile)
   # create password file in temp folder
 
-  filename=$DATE"_passfile.txt"
-  echo "$PASSWORD" > /tmp/$filename
+  
 
   if [ -d "$FOLDER" ]; then
     # the directory exists
@@ -51,8 +50,7 @@ function getFiles(){
     for file in $files;
     do
       # encrypt all the files in the for loop that were previously found
-
-      $(cat /tmp/$filename  | gpg -cv --passphrase-fd 0 -o $FOLDER/$file.gpg --cipher-algo AES256 $FOLDER/$file )
+      $(echo $PASSWORD  | gpg -cv --passphrase-fd 0 -o $FOLDER/$file.gpg --cipher-algo AES256 $FOLDER/$file )
 
       echo " "
       # remove the file after it has been encrypted
@@ -61,9 +59,6 @@ function getFiles(){
     done
     echo $count
   fi
-
-  #remove Encrypt Pass File
-  rm -rf /tmp/$filename
 
 }
 
